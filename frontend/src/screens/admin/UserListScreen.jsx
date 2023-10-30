@@ -8,10 +8,14 @@ import {
   useDeleteUserMutation,
   useGetUsersQuery,
 } from '../../slices/usersApiSlice';
+import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import AdminPaginate from '../../components/AdminPaginate';
 
 const UserListScreen = () => {
-  const { data: users, refetch, isLoading, error } = useGetUsersQuery();
+  const {pageNumber} = useParams();
+
+  const { data: users, refetch, isLoading, error } = useGetUsersQuery(pageNumber);
 
   const [deleteUser] = useDeleteUserMutation();
 
@@ -28,14 +32,16 @@ const UserListScreen = () => {
 
   return (
     <>
-      <h1>Users</h1>
+      <h1 className='heading-font'>Users</h1>
       {isLoading ? (
         <Loader />
       ) : error ? (
         <Message variant='danger'>
+          Couldn't Load Users!<br/>
           {error?.data?.message || error.error}
         </Message>
       ) : (
+        <>
         <Table striped bordered hover responsive className='table-sm'>
           <thead>
             <tr>
@@ -47,7 +53,7 @@ const UserListScreen = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
+            {users.users.map((user) => (
               <tr key={user._id}>
                 <td>{user._id}</td>
                 <td>{user.name}</td>
@@ -86,6 +92,12 @@ const UserListScreen = () => {
             ))}
           </tbody>
         </Table>
+        <AdminPaginate
+        isUsersPage = 'true'
+        pages={users.pages}
+        page={users.page}
+        keyword=''/>
+        </>
       )}
     </>
   );

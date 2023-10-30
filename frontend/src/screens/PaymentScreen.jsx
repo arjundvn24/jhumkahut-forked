@@ -5,11 +5,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import FormContainer from '../components/FormContainer';
 import CheckoutSteps from '../components/CheckoutSteps';
 import { savePaymentMethod } from '../slices/cartSlice';
+import ScrollToTop from '../components/ScrollToTop';
 
 const PaymentScreen = () => {
   const navigate = useNavigate();
   const cart = useSelector((state) => state.cart);
   const { shippingAddress } = cart;
+
+  const [shipCharge, setShipCharge] = useState(0);
 
   useEffect(() => {
     if (!shippingAddress.address) {
@@ -17,9 +20,17 @@ const PaymentScreen = () => {
     }
   }, [navigate, shippingAddress]);
 
-  const [paymentMethod, setPaymentMethod] = useState('PayPal');
-
   const dispatch = useDispatch();
+  const [paymentMethod, setPaymentMethod] = useState('');
+
+  useEffect(() => {
+    dispatch(savePaymentMethod(paymentMethod));
+    setShipCharge(
+      parseFloat(cart.convenienceFee) + parseFloat(cart.shippingPrice)
+    );
+  }, [paymentMethod, cart.convenienceFee, cart.shippingPrice, dispatch]);
+
+ 
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -29,6 +40,7 @@ const PaymentScreen = () => {
 
   return (
     <FormContainer>
+      <ScrollToTop/>
       <CheckoutSteps step1 step2 step3 />
       <h1>Payment Method</h1>
       <Form onSubmit={submitHandler}>
@@ -38,13 +50,31 @@ const PaymentScreen = () => {
             <Form.Check
               className='my-2'
               type='radio'
-              label='PayPal or Credit Card'
-              id='PayPal'
+              label='Prepaid'
+              id='Online'
               name='paymentMethod'
-              value='PayPal'
-              checked
+              value='Online'
               onChange={(e) => setPaymentMethod(e.target.value)}
             ></Form.Check>
+            <span style={{fontSize:'0.8rem',paddingLeft:'1.3rem',
+                  position: 'relative',top:'-0.8rem'}}>
+            ( UPI / Wallets / Debit or Credit Card ) 
+            {paymentMethod === 'Online' && <span style={{fontWeight:'700'}}> Shipping: ₹{shipCharge} </span>}
+            </span>
+            <Form.Check
+              className='my-2'
+              type='radio'
+              label='Cash On Delivery'
+              id='COD'
+              name='paymentMethod'
+              value='COD'
+              onChange={(e) => setPaymentMethod(e.target.value)}
+            ></Form.Check>
+            <span style={{fontSize:'0.8rem',paddingLeft:'1.3rem',
+                  position: 'relative',top:'-0.8rem'}}>
+            ( Pay at your doorstep ) 
+            {paymentMethod === 'COD' && <span style={{fontWeight:'700'}}> Shipping: ₹{shipCharge} </span>} 
+            </span>
           </Col>
         </Form.Group>
 

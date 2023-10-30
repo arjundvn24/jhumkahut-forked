@@ -5,11 +5,14 @@ const products = [
     description:
       'Bluetooth technology lets you connect it with compatible devices wirelessly High-quality AAC audio offers immersive listening experience Built-in microphone allows you to take calls while working',
     brand: 'Apple',
-    category: 'Electronics',
+    category: 'Earrings',
     price: 89.99,
     countInStock: 10,
     rating: 4.5,
     numReviews: 12,
+    countInStock: 5,
+    isWholesale: false,
+    hasSale: 50,
   },
   {
     name: 'iPhone 13 Pro 256GB Memory',
@@ -22,6 +25,9 @@ const products = [
     countInStock: 7,
     rating: 4.0,
     numReviews: 8,
+    countInStock: 5,
+    isWholesale: false,
+    hasSale: 50,
   },
   {
     name: 'Cannon EOS 80D DSLR Camera',
@@ -34,6 +40,9 @@ const products = [
     countInStock: 5,
     rating: 3,
     numReviews: 12,
+    countInStock: 5,
+    isWholesale: false,
+    hasSale: 50,
   },
   {
     name: 'Sony Playstation 5',
@@ -46,6 +55,9 @@ const products = [
     countInStock: 11,
     rating: 5,
     numReviews: 12,
+    countInStock: 5,
+    isWholesale: false,
+    hasSale: 50,
   },
   {
     name: 'Logitech G-Series Gaming Mouse',
@@ -58,6 +70,9 @@ const products = [
     countInStock: 7,
     rating: 3.5,
     numReviews: 10,
+    countInStock: 5,
+    isWholesale: false,
+    hasSale: 50,
   },
   {
     name: 'Amazon Echo Dot 3rd Generation',
@@ -70,6 +85,9 @@ const products = [
     countInStock: 0,
     rating: 4,
     numReviews: 12,
+    countInStock: 5,
+    isWholesale: false,
+    hasSale: 50,
   },
 ];
 

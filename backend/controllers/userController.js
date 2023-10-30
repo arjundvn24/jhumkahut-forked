@@ -1,6 +1,7 @@
 import asyncHandler from '../middleware/asyncHandler.js';
 import generateToken from '../utils/generateToken.js';
 import User from '../models/userModel.js';
+import Product from '../models/productModel.js'
 
 // @desc    Auth user & get token
 // @route   POST /api/users/auth
@@ -121,8 +122,15 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 // @route   GET /api/users
 // @access  Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
-  const users = await User.find({});
-  res.json(users);
+  const pageSize = process.env.ADMIN_PAGINATION_LIMIT;
+  const page = Number(req.query.pageNumber) || 1;
+
+  const count = await User.countDocuments({ });
+  const users = await User.find({})
+    .sort({ createdAt: -1 })
+    .limit(pageSize)
+    .skip(pageSize * (page - 1));
+    res.json({ users, page, pages: Math.ceil(count / pageSize) });
 });
 
 // @desc    Delete user
@@ -182,6 +190,86 @@ const updateUser = asyncHandler(async (req, res) => {
   }
 });
 
+const getMyWishList = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (user) {
+    res.json({
+      wishlist: user.wishlist,
+    });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
+const updateMyWishlist = async (req, res) => {
+  const { productId } = req.body;
+
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+      const existingItem = user.wishlist.find((item) => item._id.toString() === productId);
+
+      if (existingItem) {
+        res.status(200).json({ message: 'Item already exists in the wishlist', wishlist: user.wishlist });
+      } else {
+        // Fetch the product details from your database
+        const product = await Product.findById(productId);
+
+        if (!product) {
+          res.status(404).json({ message: 'Product not found' });
+        } else {
+          user.wishlist.push(product);
+          await user.save();
+          res.status(200).json({ message: 'Item added to the wishlist', wishlist: user.wishlist });
+        }
+      }
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const deleteFromWishlist = async (req, res) => {
+  const productId = req.body;
+
+  try {
+    const user = await User.findById(req.user._id);
+    
+    if (user) {
+      const existingItemIndex = user.wishlist.findIndex((item) => item._id.toString() === productId.id);
+      // console.log(user.wishlist.findIndex((item) => item._id.toString() === '64a01545869b445468a33ef6'));
+      if (existingItemIndex === -1) {
+        res.status(404).json({ message: 'Item not found in the wishlist' });
+      } else {
+        user.wishlist.splice(existingItemIndex, 1);
+        await user.save();
+        res.status(200).json({ message: 'Item removed from the wishlist', wishlist: user.wishlist });
+      }
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// const getMyCart = asyncHandler(async (req, res) => {
+//   const user = await User.findById(req.user._id);
+
+//   if (user) {
+//     res.json({
+//       wishList: user.wishlist,
+//     });
+//   } else {
+//     res.status(404);
+//     throw new Error('User not found');
+//   }
+// });
+
 export {
   authUser,
   registerUser,
@@ -192,4 +280,9 @@ export {
   deleteUser,
   getUserById,
   updateUser,
+  getMyWishList,
+  updateMyWishlist,
+  deleteFromWishlist,
+  // getMyCart,
+  // updateMyCart,
 };

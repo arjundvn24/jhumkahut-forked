@@ -2,24 +2,29 @@ import React, { useEffect, useState } from 'react';
 import { Table, Form, Button, Row, Col } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { FaTimes } from 'react-icons/fa';
-
+import { FaTimes,FaCheck } from 'react-icons/fa';
+import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { useProfileMutation } from '../slices/usersApiSlice';
-import { useGetMyOrdersQuery } from '../slices/ordersApiSlice';
+import { useGetMyOrdersQuery, useGetRevenueQuery } from '../slices/ordersApiSlice';
 import { setCredentials } from '../slices/authSlice';
+import AdminPaginate from '../components/AdminPaginate';
 
 const ProfileScreen = () => {
+  
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const { userInfo } = useSelector((state) => state.auth);
+  const {userInfo} = useSelector((state) => state.auth);
+  const {pageNumber} = useParams();
 
-  const { data: orders, isLoading, error } = useGetMyOrdersQuery();
+  const { data: orders, isLoading, error } = useGetMyOrdersQuery(pageNumber);
+  const { data: revenue, isLoading: loadRevenue, error: err } = useGetRevenueQuery();
+  
 
   const [updateProfile, { isLoading: loadingUpdateProfile }] =
     useProfileMutation();
@@ -50,9 +55,17 @@ const ProfileScreen = () => {
     }
   };
 
+  const [revenueByMonth, setRevenueByMonth] = useState({}); // Declare revenueByMonth variable
+
+  useEffect(() => {
+    if (revenue && revenue.revenueByMonth) {
+      setRevenueByMonth(revenue.revenueByMonth);
+    }
+  }, [revenue]);
+
   return (
     <Row>
-      <Col md={3}>
+      <Col md={3} style={{marginBottom:'4rem'}}>
         <h2>User Profile</h2>
 
         <Form onSubmit={submitHandler}>
@@ -102,7 +115,37 @@ const ProfileScreen = () => {
           {loadingUpdateProfile && <Loader />}
         </Form>
       </Col>
-      <Col md={9}>
+      <Col md={8}>
+
+      {userInfo.isAdmin && (
+          <>
+            <h2>Monthly Revenue</h2>
+            {loadRevenue ? (
+              <Loader />
+            ) : (
+              Object.keys(revenueByMonth).length > 0 ? (
+                <Table striped hover responsive className='table-sm'>
+                  <thead>
+                    <tr>
+                      <th>Month</th>
+                      <th>Revenue</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.keys(revenueByMonth).map((month) => (
+                      <tr key={month}>
+                        <td>{month}</td>
+                        <td>{revenueByMonth[month]}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              ) : (
+                <Message variant='info'>No revenue data available</Message>
+              )
+            )}
+          </>
+        )}
         <h2>My Orders</h2>
         {isLoading ? (
           <Loader />
@@ -111,6 +154,7 @@ const ProfileScreen = () => {
             {error?.data?.message || error.error}
           </Message>
         ) : (
+          <>
           <Table striped hover responsive className='table-sm'>
             <thead>
               <tr>
@@ -123,21 +167,29 @@ const ProfileScreen = () => {
               </tr>
             </thead>
             <tbody>
-              {orders.map((order) => (
+              {orders.orders.map((order) => (
                 <tr key={order._id}>
                   <td>{order._id}</td>
                   <td>{order.createdAt.substring(0, 10)}</td>
                   <td>{order.totalPrice}</td>
                   <td>
-                    {order.isPaid ? (
-                      order.paidAt.substring(0, 10)
+                    {order.paymentMethod === 'Online' ? (
+                    <>
+                      { order.isPaid ? (
+                        order.paidAt.substring(0, 10)
+                      ) : (
+                        <FaTimes style={{ color: 'red' }} />
+                      )}
+                    </>
                     ) : (
-                      <FaTimes style={{ color: 'red' }} />
+                        // <FaCheck style={{ color: 'green' }} />
+                        <span>COD</span>
                     )}
                   </td>
                   <td>
                     {order.isDelivered ? (
                       order.deliveredAt.substring(0, 10)
+                      // <FaCheck />
                     ) : (
                       <FaTimes style={{ color: 'red' }} />
                     )}
@@ -153,6 +205,13 @@ const ProfileScreen = () => {
               ))}
             </tbody>
           </Table>
+          <AdminPaginate
+          isMyordersPage = 'true'
+          pages={orders.pages}
+          page={orders.page}
+          keyword=''
+        />
+        </>
         )}
       </Col>
     </Row>

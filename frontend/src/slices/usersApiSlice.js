@@ -31,8 +31,9 @@ export const userApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     getUsers: builder.query({
-      query: () => ({
+      query: (pageNumber) => ({
         url: USERS_URL,
+        params: { pageNumber },
       }),
       providesTags: ['User'],
       keepUnusedDataFor: 5,
@@ -57,6 +58,35 @@ export const userApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['User'],
     }),
+    getMyWishlist: builder.query({
+      query: () => ({
+        url: `${USERS_URL}/myWishlist`,
+      }),
+      providesTags: ['User'],
+      keepUnusedDataFor: 5,
+    }),
+    updateWishlist: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/myWishlist`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: ['User'],
+    }),
+    deleteFromWishlist: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/deleteFromWishlist`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: ['User'],
+    }),
+    getMyCart: builder.query({
+      query: () => ({
+        url: `${USERS_URL}/myCart`,
+      }),
+      keepUnusedDataFor: 5,
+    }),
   }),
 });
 
@@ -69,4 +99,8 @@ export const {
   useDeleteUserMutation,
   useUpdateUserMutation,
   useGetUserDetailsQuery,
+  useGetMyCartQuery,
+  useGetMyWishlistQuery,
+  useUpdateWishlistMutation,
+  useDeleteFromWishlistMutation,
 } = userApiSlice;

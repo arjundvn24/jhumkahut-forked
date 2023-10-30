@@ -21,6 +21,10 @@ const userSchema = mongoose.Schema(
       required: true,
       default: false,
     },
+    wishlist: {
+      type: Array,
+      default: [],
+    },
   },
   {
     timestamps: true,

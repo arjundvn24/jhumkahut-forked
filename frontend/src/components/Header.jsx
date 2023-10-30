@@ -1,5 +1,5 @@
 import { Navbar, Nav, Container, NavDropdown, Badge } from 'react-bootstrap';
-import { FaShoppingCart, FaUser } from 'react-icons/fa';
+import { FaHeart, FaShoppingCart, FaUser } from 'react-icons/fa';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +7,10 @@ import { useLogoutMutation } from '../slices/usersApiSlice';
 import { logout } from '../slices/authSlice';
 import SearchBox from './SearchBox';
 import logo from '../assets/logo.png';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {faHeart as fillHeart}from '@fortawesome/free-solid-svg-icons';
+import {faHeart} from '@fortawesome/free-regular-svg-icons'
+import './fonts.css'
 const Header = () => {
   const { cartItems } = useSelector((state) => state.cart);
   const { userInfo } = useSelector((state) => state.auth);
@@ -27,21 +30,59 @@ const Header = () => {
     }
   };
 
+  const handleWishlistClick = () => {
+    navigate('/login?redirect=/wishlist');
+  };
+
   return (
     <header>
-      <Navbar bg='primary' variant='dark' expand='lg' collapseOnSelect>
+      <Navbar bg='primary' variant='dark' expand='lg' collapseOnSelect id='top'>
         <Container>
           <LinkContainer to='/'>
             <Navbar.Brand>
-              <img src={logo} alt='ProShop' />
-              ProShop
+              {/* <img src={logo} alt='ProShop' 
+              height='40'
+              loading='lazy'/> */}
+              <span className='brand-name'>JhumkaHut</span>
             </Navbar.Brand>
           </LinkContainer>
+
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
-            <Nav className='ms-auto'>
-              <SearchBox />
-              <LinkContainer to='/cart'>
+            <Nav>
+            <SearchBox />
+
+            <LinkContainer to='/'>
+                <Nav.Link>
+                  Home
+                </Nav.Link>
+              </LinkContainer>
+
+            <NavDropdown title='Categories'>
+              <LinkContainer to='/Earrings'>
+                <NavDropdown.Item>
+                  Earrings
+                </NavDropdown.Item>
+              </LinkContainer>
+              <LinkContainer to='/Necklaces'>
+                <NavDropdown.Item>
+                  Necklaces
+                </NavDropdown.Item>
+              </LinkContainer>
+              <LinkContainer to='/Chains'>
+                <NavDropdown.Item>
+                  Chains
+                </NavDropdown.Item>
+              </LinkContainer>
+            </NavDropdown>  
+
+            <LinkContainer to="/wishlist" onClick={handleWishlistClick}>
+              <Nav.Link>
+              <FontAwesomeIcon icon={faHeart} className='fa-lg'/> Wishlist
+              </Nav.Link>
+            </LinkContainer>
+
+              <LinkContainer to='/cart'> 
                 <Nav.Link>
                   <FaShoppingCart /> Cart
                   {cartItems.length > 0 && (
@@ -81,6 +122,9 @@ const Header = () => {
                   </LinkContainer>
                   <LinkContainer to='/admin/userlist'>
                     <NavDropdown.Item>Users</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to='/admin/couponlist'>
+                    <NavDropdown.Item>Coupons</NavDropdown.Item>
                   </LinkContainer>
                 </NavDropdown>
               )}

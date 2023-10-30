@@ -31,6 +31,11 @@ const productSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    images: {
+      type: [String],
+      required: true,
+      default: [],
+    },
     brand: {
       type: String,
       required: true,
@@ -64,6 +69,14 @@ const productSchema = mongoose.Schema(
       required: true,
       default: 0,
     },
+    isWholesale: {
+      type: Boolean,
+      default: false,
+    },
+    hasSale: {
+      type: Number,
+      default: 0,
+    }
   },
   {
     timestamps: true,

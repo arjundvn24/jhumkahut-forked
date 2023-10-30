@@ -31,7 +31,14 @@ import UserListScreen from './screens/admin/UserListScreen';
 import UserEditScreen from './screens/admin/UserEditScreen';
 import store from './store';
 import { Provider } from 'react-redux';
-import { PayPalScriptProvider } from '@paypal/react-paypal-js';
+import CategoriesScreen from './screens/CategoriesScreen';
+import WholeSale from './screens/WholeSale';
+import Returns from './screens/Returns';
+import CouponListScreen from './screens/admin/CouponListScreen';
+import CouponEditScreen from './screens/admin/CouponEditScreen';
+import WishListScreen from './screens/WishListScreen';
+import ContactUs from './screens/ContactUs';
+import AboutUs from './screens/AboutUs';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -44,7 +51,17 @@ const router = createBrowserRouter(
         element={<HomeScreen />}
       />
       <Route path='/product/:id' element={<ProductScreen />} />
+      <Route path='/help/returns' element={<Returns />} />
+      <Route path='/help/wholesale' element={<WholeSale />} />
+      <Route path='/help/contact' element={<ContactUs/>} />
+      <Route path='/help/about' element={<AboutUs />} />
+
+      <Route path='/:category' element={<CategoriesScreen />} />
+      <Route path='/:category/:pageNumber' element={<CategoriesScreen />} />
+
+
       <Route path='/cart' element={<CartScreen />} />
+      <Route path='/wishlist' element={<WishListScreen />} />
       <Route path='/login' element={<LoginScreen />} />
       <Route path='/register' element={<RegisterScreen />} />
       {/* Registered users */}
@@ -54,17 +71,24 @@ const router = createBrowserRouter(
         <Route path='/placeorder' element={<PlaceOrderScreen />} />
         <Route path='/order/:id' element={<OrderScreen />} />
         <Route path='/profile' element={<ProfileScreen />} />
+        <Route path='/profile/page/:pageNumber' element={<ProfileScreen />} />
+
       </Route>
       {/* Admin users */}
       <Route path='' element={<AdminRoute />}>
         <Route path='/admin/orderlist' element={<OrderListScreen />} />
+        <Route path='/admin/orderlist/page/:pageNumber' element={<OrderListScreen />} />
+
         <Route path='/admin/productlist' element={<ProductListScreen />} />
+        <Route path='/admin/couponlist' element={<CouponListScreen />} />
         <Route
           path='/admin/productlist/:pageNumber'
           element={<ProductListScreen />}
         />
         <Route path='/admin/userlist' element={<UserListScreen />} />
+        <Route path='/admin/userlist/page/:pageNumber' element={<UserListScreen />} />
         <Route path='/admin/product/:id/edit' element={<ProductEditScreen />} />
+        <Route path='/admin/coupon/:id/edit' element={<CouponEditScreen />} />
         <Route path='/admin/user/:id/edit' element={<UserEditScreen />} />
       </Route>
     </Route>
@@ -76,9 +100,7 @@ root.render(
   <React.StrictMode>
     <HelmetProvider>
       <Provider store={store}>
-        <PayPalScriptProvider deferLoading={true}>
           <RouterProvider router={router} />
-        </PayPalScriptProvider>
       </Provider>
     </HelmetProvider>
   </React.StrictMode>

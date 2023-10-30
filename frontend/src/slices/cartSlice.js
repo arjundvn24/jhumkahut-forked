@@ -3,7 +3,7 @@ import { updateCart } from '../utils/cartUtils';
 
 const initialState = localStorage.getItem('cart')
   ? JSON.parse(localStorage.getItem('cart'))
-  : { cartItems: [], shippingAddress: {}, paymentMethod: 'PayPal' };
+  : { cartItems: [], shippingAddress: {}, paymentMethod: 'Online' };
 
 const cartSlice = createSlice({
   name: 'cart',
@@ -21,7 +21,6 @@ const cartSlice = createSlice({
       } else {
         state.cartItems = [...state.cartItems, item];
       }
-
       return updateCart(state, item);
     },
     removeFromCart: (state, action) => {
@@ -31,15 +30,47 @@ const cartSlice = createSlice({
     saveShippingAddress: (state, action) => {
       state.shippingAddress = action.payload;
       localStorage.setItem('cart', JSON.stringify(state));
+      return updateCart(state);
     },
     savePaymentMethod: (state, action) => {
       state.paymentMethod = action.payload;
       localStorage.setItem('cart', JSON.stringify(state));
+      return updateCart(state);
     },
     clearCartItems: (state, action) => {
       state.cartItems = [];
       localStorage.setItem('cart', JSON.stringify(state));
     },
+    saveCouponDiscount: (state,action) => {
+      state.CouponDiscount = action.payload;
+      localStorage.setItem('cart', JSON.stringify(state));
+      return updateCart(state);
+    },
+    clearCouponDiscount: (state, action) => {
+      state.CouponDiscount = 0;
+      localStorage.setItem('cart', JSON.stringify(state));
+      return updateCart(state);
+    },
+    saveFlatDiscount: (state,action) => {
+      state.FlatDiscount = action.payload;
+      localStorage.setItem('cart', JSON.stringify(state));
+      return updateCart(state);
+    },
+    clearFlatDiscount: (state, action) => {
+      state.FlatDiscount = 0;
+      localStorage.setItem('cart', JSON.stringify(state));
+      return updateCart(state);
+    },
+    setShipCoupon: (state,action) => {
+      state.shipCoupon = action.payload;
+      localStorage.setItem('cart',JSON.stringify(state) );
+      return updateCart(state);
+    },
+    resetShipCoupon: (state,action) => {
+      state.shipCoupon = false;
+      localStorage.setItem('cart',JSON.stringify(state) );
+      return updateCart(state);
+    }
   },
 });
 
@@ -48,6 +79,12 @@ export const {
   removeFromCart,
   saveShippingAddress,
   savePaymentMethod,
+  saveCouponDiscount,
+  clearCouponDiscount,
+  saveFlatDiscount,
+  clearFlatDiscount,
+  setShipCoupon,
+  resetShipCoupon,
   clearCartItems,
 } = cartSlice.actions;
 

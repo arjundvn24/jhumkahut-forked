@@ -10,10 +10,10 @@ const getProducts = asyncHandler(async (req, res) => {
 
   const keyword = req.query.keyword
     ? {
-        name: {
-          $regex: req.query.keyword,
-          $options: 'i',
-        },
+      $or: [
+        { name: { $regex: req.query.keyword, $options: 'i' } },
+        { description: { $regex: req.query.keyword, $options: 'i' } },
+      ],
       }
     : {};
 
@@ -25,13 +25,13 @@ const getProducts = asyncHandler(async (req, res) => {
   res.json({ products, page, pages: Math.ceil(count / pageSize) });
 });
 
+
 // @desc    Fetch single product
 // @route   GET /api/products/:id
 // @access  Public
 const getProductById = asyncHandler(async (req, res) => {
   // NOTE: checking for valid ObjectId to prevent CastError moved to separate
   // middleware. See README for more info.
-
   const product = await Product.findById(req.params.id);
   if (product) {
     return res.json(product);
@@ -51,12 +51,15 @@ const createProduct = asyncHandler(async (req, res) => {
     name: 'Sample name',
     price: 0,
     user: req.user._id,
-    image: '/images/sample.jpg',
+    image:'/images/sample.jpg',
+    images: ['/images/sample.jpg'],
     brand: 'Sample brand',
     category: 'Sample category',
     countInStock: 0,
     numReviews: 0,
     description: 'Sample description',
+    isWholesale: false,
+    hasSale: 0,
   });
 
   const createdProduct = await product.save();
@@ -67,19 +70,49 @@ const createProduct = asyncHandler(async (req, res) => {
 // @route   PUT /api/products/:id
 // @access  Private/Admin
 const updateProduct = asyncHandler(async (req, res) => {
-  const { name, price, description, image, brand, category, countInStock } =
+  const { name, price, description, images, brand, category, countInStock, isWholesale, hasSale } =
     req.body;
 
   const product = await Product.findById(req.params.id);
+
+function isImage(url) {
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+    const ext = url.split('.').pop().toLowerCase();
+    return imageExtensions.includes(ext);
+  }
 
   if (product) {
     product.name = name;
     product.price = price;
     product.description = description;
-    product.image = image;
+    {isImage(images[0]) ? (product.image = images[0]) : (product.image = images[1])};
+    product.images = images;
     product.brand = brand;
     product.category = category;
     product.countInStock = countInStock;
+    product.isWholesale = isWholesale;
+    product.hasSale = hasSale;
+
+    const updatedProduct = await product.save();
+    res.json(updatedProduct);
+  } else {
+    res.status(404);
+    throw new Error('Product not found');
+  }
+});
+
+const updateProductStock = asyncHandler(async (req, res) => {
+  const { productId, stockReduceBy = 0, stockIncreaseBy = 0 } = req.body;
+
+  const product = await Product.findById(productId);
+
+  if (product) {
+    // if(stockReduceBy)
+    // { 
+      product.countInStock = product.countInStock - stockReduceBy + stockIncreaseBy;
+    //  }
+    // else if(stockIncreaseBy)
+    // { product.countInStock = product.countInStock + stockIncreaseBy; }
 
     const updatedProduct = await product.save();
     res.json(updatedProduct);
@@ -149,10 +182,34 @@ const createProductReview = asyncHandler(async (req, res) => {
 // @route   GET /api/products/top
 // @access  Public
 const getTopProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find({}).sort({ rating: -1 }).limit(3);
-
+  const products = await Product.find({}).sort({ rating: -1 }).limit(4);
   res.json(products);
 });
+
+// @desc    Get LTH rated products
+// @route   GET /api/products/lth
+// @access  Public
+const getLTHProducts = asyncHandler(async (req, res) => {
+  const products = await Product.find({ price: { $lt: 500 } }).sort({ price: 1 }).limit(8);
+  res.json(products);
+});
+
+const getWholesaleProducts = asyncHandler(async (req,res) => {
+  const products = await Product.find({ isWholesale: true });
+  res.json(products);
+});
+
+const getCategoryProducts = asyncHandler(async (req, res) => {
+  const pageSize = process.env.PAGINATION_LIMIT;
+  const page = Number(req.query.pageNumber) || 1;
+
+  const count = await Product.countDocuments({ category: req.params.category});
+  const products = await Product.find({ category: req.params.category})
+  .limit(pageSize)
+  .skip(pageSize * (page - 1));
+  res.json({ products, page, pages: Math.ceil(count / pageSize) });
+});
+
 
 export {
   getProducts,
@@ -162,4 +219,8 @@ export {
   deleteProduct,
   createProductReview,
   getTopProducts,
+  getLTHProducts,
+  getWholesaleProducts,
+  getCategoryProducts,
+  updateProductStock,
 };

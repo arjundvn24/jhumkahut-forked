@@ -32,6 +32,14 @@ export const productsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Products'],
     }),
+    updateProductStock: builder.mutation({
+      query: (data) => ({
+        url: `${PRODUCTS_URL}/${data.productId}/updateStock`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: ['Products'],
+    }),
     uploadProductImage: builder.mutation({
       query: (data) => ({
         url: `/api/upload`,
@@ -58,6 +66,22 @@ export const productsApiSlice = apiSlice.injectEndpoints({
       query: () => `${PRODUCTS_URL}/top`,
       keepUnusedDataFor: 5,
     }),
+    getLTHProducts: builder.query({
+      query: () => `${PRODUCTS_URL}/lth`,
+      keepUnusedDataFor: 5,
+    }),
+    getWholesaleProducts: builder.query({
+      query: () => `${PRODUCTS_URL}/wholesale`,
+      keepUnusedDataFor: 5,
+    }),
+    getCategoryProducts: builder.query({
+      query: ({ pageNumber, category }) => ({
+        url: `${PRODUCTS_URL}/category/${category}`,
+        params: { pageNumber },
+      }),
+      providesTags: ['Products'],
+      keepUnusedDataFor: 5,
+    }),
   }),
 });
 
@@ -66,8 +90,12 @@ export const {
   useGetProductDetailsQuery,
   useCreateProductMutation,
   useUpdateProductMutation,
+  useUpdateProductStockMutation,
   useUploadProductImageMutation,
   useDeleteProductMutation,
   useCreateReviewMutation,
   useGetTopProductsQuery,
+  useGetLTHProductsQuery,
+  useGetCategoryProductsQuery,
+  useGetWholesaleProductsQuery,
 } = productsApiSlice;

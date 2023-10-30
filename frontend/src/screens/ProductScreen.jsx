@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,8 +6,8 @@ import {
   Row,
   Col,
   Image,
+  Carousel,
   ListGroup,
-  Card,
   Button,
   Form,
 } from 'react-bootstrap';
@@ -20,7 +20,11 @@ import Rating from '../components/Rating';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import Meta from '../components/Meta';
-import { addToCart } from '../slices/cartSlice';
+import { addToCart, clearCouponDiscount, clearFlatDiscount, resetShipCoupon } from '../slices/cartSlice';
+import ScrollToTop from '../components/ScrollToTop';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {faHeart, faShareNodes, faTruckFast}from '@fortawesome/free-solid-svg-icons';
+import { useUpdateWishlistMutation } from '../slices/usersApiSlice';
 
 const ProductScreen = () => {
   const { id: productId } = useParams();
@@ -32,10 +36,30 @@ const ProductScreen = () => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
 
+  const state = useSelector((state) => state.cart);
+
+  const [updateWishlist, { isLoading: loadingWishlist }] = useUpdateWishlistMutation();
+
   const addToCartHandler = () => {
     dispatch(addToCart({ ...product, qty }));
+    dispatch(clearCouponDiscount(state));
+    dispatch(resetShipCoupon(state));
+    dispatch(clearFlatDiscount(state));
     navigate('/cart');
   };
+
+  const addToWishListHandler = async() =>{
+    navigate(`/login?redirect=/product/${productId}`);
+    try {
+      const res = await updateWishlist({productId});
+      if(res.data.message === 'Item already exists in the wishlist')
+      { toast.error(res.data.message); }
+      else if(res.data.message === 'Item added to the wishlist')
+      { toast.success(res.data.message); }
+    } catch (error) {
+      console.error('Error updating wishlist:', error);
+    }
+  }
 
   const {
     data: product,
@@ -65,8 +89,26 @@ const ProductScreen = () => {
     }
   };
 
+  const copyToClipboard = () => {
+    const currentURL = window.location.href;
+    navigator.clipboard.writeText(currentURL)
+      .then(() => {
+        toast.success('URL copied to clipboard!');
+      })
+      .catch((err) => {
+        toast.error('Failed to copy URL');
+      });
+    }
+
+  function isImage(url) {
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+    const ext = url.split('.').pop().toLowerCase();
+    return imageExtensions.includes(ext);
+  }
+
   return (
     <>
+    <ScrollToTop/>
       <Link className='btn btn-light my-3' to='/'>
         Go Back
       </Link>
@@ -77,16 +119,44 @@ const ProductScreen = () => {
           {error?.data?.message || error.error}
         </Message>
       ) : (
-        <>
-          <Meta title={product.name} description={product.description} />
-          <Row>
-            <Col md={6}>
-              <Image src={product.image} alt={product.name} fluid />
+        <div className='small-container'>
+          <Meta title={product.name+' - '+product.brand} description={product.description} />
+          <Row className='sp-even'>
+            <Col md={6} className='overflow-hidden height-adjust width-adjust'>
+              <Carousel
+              style={{display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height:'100%',
+                width: '100%'}}
+              >
+                {/* {product.images.map((image, index) => (
+                  <Carousel.Item key={index}>
+                    <Image className='carousel-image' src={image} alt={product.name} fluid />
+                  </Carousel.Item>
+                ))} */}
+                {product.images.map((item, index) => (
+                  <Carousel.Item key={index}>
+                    {!isImage(item) ? ( 
+                     <video src={item} className='carousel-video' controls autoPlay loop muted
+                      style={{objectFit: 'cover',
+                        width:'100%',
+                        height: '100%',
+                    }}/>) 
+                    : (
+                      <Image className='carousel-image' src={item} alt={product.name} fluid
+                      style={{objectFit: 'cover',
+                      width:'100%',
+                      height: '100%',
+                    }} />
+                  )}
+                  </Carousel.Item>
+                ))}
+              </Carousel>
             </Col>
             <Col md={3}>
-              <ListGroup variant='flush'>
-                <ListGroup.Item>
-                  <h3>{product.name}</h3>
+            <ListGroup.Item>
+                  <h3 className='py-2'>{product.name}</h3>
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <Rating
@@ -94,23 +164,24 @@ const ProductScreen = () => {
                     text={`${product.numReviews} reviews`}
                   />
                 </ListGroup.Item>
-                <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
                 <ListGroup.Item>
-                  Description: {product.description}
+                  Price: 
+                  <div className='product-price'>
+                  <h5 className={product.hasSale === 0 ? '' : 'strike-it'}>₹{product.price}</h5>
+                  <h5 className='text-green'>{product.hasSale ? <span> &nbsp; ₹{(product.price - (product.price * product.hasSale/100)).toFixed(2)}</span> : (<span></span>)}</h5>
+                  {/* <h5 className='text-green'>{product.hasSale ? <span> &nbsp; ₹{product.hasSale}</span> : (<span></span>)}</h5> */}
+                  </div>
                 </ListGroup.Item>
-              </ListGroup>
-            </Col>
-            <Col md={3}>
-              <Card>
+                         
                 <ListGroup variant='flush'>
-                  <ListGroup.Item>
+                  {/* <ListGroup.Item>
                     <Row>
                       <Col>Price:</Col>
                       <Col>
-                        <strong>${product.price}</strong>
+                        <strong>₹{product.price}</strong>
                       </Col>
                     </Row>
-                  </ListGroup.Item>
+                  </ListGroup.Item> */}
                   <ListGroup.Item>
                     <Row>
                       <Col>Status:</Col>
@@ -144,22 +215,53 @@ const ProductScreen = () => {
                     </ListGroup.Item>
                   )}
 
-                  <ListGroup.Item>
+                  <ListGroup.Item className='btn-flex' style={{alignContent:'center'}}>
                     <Button
-                      className='btn-block'
+                      className='btn-block marRt'
                       type='button'
                       disabled={product.countInStock === 0}
                       onClick={addToCartHandler}
                     >
                       Add To Cart
                     </Button>
+
+                    <Button
+                      className='btn-block'
+                      type='button'
+                      // disabled={product.countInStock === 0}
+                      onClick={addToWishListHandler}
+                    >
+                      <FontAwesomeIcon icon={faHeart} className='fa-lg'/>
+                    </Button>
+
+                    <Button
+                      className='btn-block'
+                      type='button'
+                      onClick={copyToClipboard}
+                      style={{position: 'relative',
+                        marginLeft:'0.5rem'}}
+                    >
+                      <FontAwesomeIcon style={{fontSize:'1.5rem'}}icon={faShareNodes}/>
+                    </Button>
                   </ListGroup.Item>
                 </ListGroup>
-              </Card>
             </Col>
           </Row>
           <Row className='review'>
-            <Col md={6}>
+          <Col md={6}>
+           <ListGroup style={{fontWeight:'700'}}>
+            <div className='text-black'>
+            <span><FontAwesomeIcon icon={faTruckFast} /></span> FREE Shipping on prepaid orders above ₹699.
+              </div>
+              </ListGroup>
+              <ListGroup style={{marginBottom:'1rem'}} variant='flush'>
+                Delivery: Within 5-7 business days.
+              </ListGroup>
+              <ListGroup variant='flush'>
+              Description: {product.description}
+              </ListGroup>
+            </Col>
+            <Col md={3} className='add-pad'>
               <h2>Reviews</h2>
               {product.reviews.length === 0 && <Message>No Reviews</Message>}
               <ListGroup variant='flush'>
@@ -171,7 +273,7 @@ const ProductScreen = () => {
                     <p>{review.comment}</p>
                   </ListGroup.Item>
                 ))}
-                <ListGroup.Item>
+                <ListGroup>
                   <h2>Write a Customer Review</h2>
 
                   {loadingProductReview && <Loader />}
@@ -217,11 +319,11 @@ const ProductScreen = () => {
                       Please <Link to='/login'>sign in</Link> to write a review
                     </Message>
                   )}
-                </ListGroup.Item>
+                </ListGroup>
               </ListGroup>
             </Col>
           </Row>
-        </>
+        </div>
       )}
     </>
   );

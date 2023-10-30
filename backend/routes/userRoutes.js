@@ -9,6 +9,10 @@ import {
   deleteUser,
   getUserById,
   updateUser,
+  getMyWishList,
+  // getMyCart,
+  updateMyWishlist,
+  deleteFromWishlist,
 } from '../controllers/userController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
@@ -21,6 +25,19 @@ router
   .route('/profile')
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile);
+  
+// router
+//   .route('/myCart')
+//   .get(protect, getMyCart)
+
+router
+  .route('/myWishlist')
+  .get(protect, getMyWishList)
+  .put(protect, updateMyWishlist)
+router  
+  .route('/deleteFromWishlist')
+  .put(protect, deleteFromWishlist)
+    
 router
   .route('/:id')
   .delete(protect, admin, deleteUser)

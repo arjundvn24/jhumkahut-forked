@@ -1,6 +1,6 @@
 import { LinkContainer } from 'react-router-bootstrap';
 import { Table, Button, Row, Col } from 'react-bootstrap';
-import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaPlus, FaTrash, FaExclamationTriangle } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
@@ -18,6 +18,8 @@ const ProductListScreen = () => {
   const { data, isLoading, error, refetch } = useGetProductsQuery({
     pageNumber,
   });
+
+  console.log(data)
 
   const [deleteProduct, { isLoading: loadingDelete }] =
     useDeleteProductMutation();
@@ -49,25 +51,27 @@ const ProductListScreen = () => {
 
   return (
     <>
-      <Row className='align-items-center'>
-        <Col>
-          <h1>Products</h1>
-        </Col>
-        <Col className='text-end'>
-          <Button className='my-3' onClick={createProductHandler}>
-            <FaPlus /> Create Product
-          </Button>
-        </Col>
-      </Row>
+      <h1 className='heading-font'>Products</h1>
+
 
       {loadingCreate && <Loader />}
       {loadingDelete && <Loader />}
       {isLoading ? (
         <Loader />
       ) : error ? (
-        <Message variant='danger'>{error}</Message>
+        <Message variant='danger'>
+          Couldn't Load Products! <br/>
+          {error?.data?.message || error.error}
+        </Message>
       ) : (
         <>
+          <Row className='align-items-center'>
+            <Col className='text-end'>
+              <Button className='my-3' onClick={createProductHandler}>
+                <FaPlus /> Create Product
+              </Button>
+            </Col>
+          </Row>
           <Table striped bordered hover responsive className='table-sm'>
             <thead>
               <tr>
@@ -84,10 +88,17 @@ const ProductListScreen = () => {
                 <tr key={product._id}>
                   <td>{product._id}</td>
                   <td>{product.name}</td>
-                  <td>${product.price}</td>
+                  <td>₹{product.price}</td>
                   <td>{product.category}</td>
                   <td>{product.brand}</td>
-                  <td>
+                  <td style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center'}}>
+                    {product.countInStock <= 0 ? (<LinkContainer to={`/admin/product/${product._id}/edit`}>
+                        <FaExclamationTriangle className='text-yellow'/>
+                    </LinkContainer>) : (<span></span>)}
                     <LinkContainer to={`/admin/product/${product._id}/edit`}>
                       <Button variant='light' className='btn-sm mx-2'>
                         <FaEdit />

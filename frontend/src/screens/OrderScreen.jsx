@@ -1,7 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect} from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Row, Col, ListGroup, Image, Card, Button } from 'react-bootstrap';
-import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import Message from '../components/Message';
@@ -9,12 +8,22 @@ import Loader from '../components/Loader';
 import {
   useDeliverOrderMutation,
   useGetOrderDetailsQuery,
-  useGetPaypalClientIdQuery,
-  usePayOrderMutation,
+  // useGetRazorpayClientIdQuery,
+  // usePayOrderMutation,
+  useReturnOrderMutation,
 } from '../slices/ordersApiSlice';
+import ScrollToTop from '../components/ScrollToTop';
+import { useUpdateProductStockMutation } from '../slices/productsApiSlice';
+import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleCheck} from '@fortawesome/free-regular-svg-icons';
+import{faDownload} from '@fortawesome/free-solid-svg-icons';
+import html2canvas from 'html2canvas';
+
 
 const OrderScreen = () => {
   const { id: orderId } = useParams();
+  const navigate = useNavigate();
 
   const {
     data: order,
@@ -23,91 +32,71 @@ const OrderScreen = () => {
     error,
   } = useGetOrderDetailsQuery(orderId);
 
-  const [payOrder, { isLoading: loadingPay }] = usePayOrderMutation();
-
   const [deliverOrder, { isLoading: loadingDeliver }] =
     useDeliverOrderMutation();
 
+  const [returnOrder, {isLoading: loadingReturn }] = useReturnOrderMutation();
+  const [updateStock, {isLoading: loadStock, error: err}] = useUpdateProductStockMutation();
+
   const { userInfo } = useSelector((state) => state.auth);
 
-  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
-
-  const {
-    data: paypal,
-    isLoading: loadingPayPal,
-    error: errorPayPal,
-  } = useGetPaypalClientIdQuery();
-
   useEffect(() => {
-    if (!errorPayPal && !loadingPayPal && paypal.clientId) {
-      const loadPaypalScript = async () => {
-        paypalDispatch({
-          type: 'resetOptions',
-          value: {
-            'client-id': paypal.clientId,
-            currency: 'USD',
-          },
-        });
-        paypalDispatch({ type: 'setLoadingStatus', value: 'pending' });
-      };
-      if (order && !order.isPaid) {
-        if (!window.paypal) {
-          loadPaypalScript();
-        }
-      }
-    }
-  }, [errorPayPal, loadingPayPal, order, paypal, paypalDispatch]);
-
-  function onApprove(data, actions) {
-    return actions.order.capture().then(async function (details) {
-      try {
-        await payOrder({ orderId, details });
-        refetch();
-        toast.success('Order is paid');
-      } catch (err) {
-        toast.error(err?.data?.message || err.error);
-      }
-    });
-  }
-
-  // TESTING ONLY! REMOVE BEFORE PRODUCTION
-  // async function onApproveTest() {
-  //   await payOrder({ orderId, details: { payer: {} } });
-  //   refetch();
-
-  //   toast.success('Order is paid');
-  // }
-
-  function onError(err) {
-    toast.error(err.message);
-  }
-
-  function createOrder(data, actions) {
-    return actions.order
-      .create({
-        purchase_units: [
-          {
-            amount: { value: order.totalPrice },
-          },
-        ],
-      })
-      .then((orderID) => {
-        return orderID;
-      });
-  }
-
+    refetch();
+  },[order])
+  
   const deliverHandler = async () => {
     await deliverOrder(orderId);
     refetch();
   };
 
+  const goBack = () => {
+		navigate(-1);
+	}
+
+  const printContent = () => {
+    const targetElement = document.getElementById('printable-content');
+    html2canvas(targetElement).then(canvas => {
+      const dataURL = canvas.toDataURL();
+      const link = document.createElement('a');
+      link.href = dataURL;
+      link.download = `${orderId}.png`; // The name of the downloaded file
+      link.click();
+    })};
+
+  const returnHandler = async () => {
+    await returnOrder(orderId);
+    console.log(order.orderItems[0].product)
+    order.orderItems.forEach(async (item) => {
+      await updateStock({
+        productId: item.product,
+        stockIncreaseBy: item.qty,
+      });
+    });
+    refetch();
+    toast.success('order returned');
+  }
   return isLoading ? (
     <Loader />
   ) : error ? (
     <Message variant='danger'>{error}</Message>
   ) : (
     <>
-      <h1>Order {order._id}</h1>
+    <ScrollToTop/>
+      <div className='btns-orderscreen'>
+        <button onClick={goBack} className='btn btn-light mb-4'>
+          Go Back
+        </button>
+        <Button id='print-btn' 
+        type='button'
+        className='btn btn-block mb-4'
+        onClick={printContent} >
+          <FontAwesomeIcon icon={faDownload} />
+        </Button>
+      </div>
+      <div id='printable-content'>
+      <div className='centered icon-edit'><FontAwesomeIcon icon={faCircleCheck} className='text-green' /></div>
+      <h1 className='text-green marBot-rm centered'> We Have Recieved Your Order</h1>
+      <h5 className='font-adjust centered'>Order No {order._id}</h5>
       <Row>
         <Col md={8}>
           <ListGroup variant='flush'>
@@ -121,8 +110,9 @@ const OrderScreen = () => {
                 <a href={`mailto:${order.user.email}`}>{order.user.email}</a>
               </p>
               <p>
-                <strong>Address:</strong>
-                {order.shippingAddress.address}, {order.shippingAddress.city}{' '}
+                <strong>Address: </strong>
+                {order.shippingAddress.address}, {order.shippingAddress.city}{' '},
+                {order.shippingAddress.State}{' '}
                 {order.shippingAddress.postalCode},{' '}
                 {order.shippingAddress.country}
               </p>
@@ -141,10 +131,15 @@ const OrderScreen = () => {
                 <strong>Method: </strong>
                 {order.paymentMethod}
               </p>
-              {order.isPaid ? (
+              {order.isPaid && order.paymentMethod === 'Online' ? (
                 <Message variant='success'>Paid on {order.paidAt}</Message>
               ) : (
-                <Message variant='danger'>Not Paid</Message>
+                <>
+                {order.paymentMethod === 'COD' ? (<></>) 
+                : (
+                  <Message variant='danger'>Not Paid</Message>
+                )}
+                </>
               )}
             </ListGroup.Item>
 
@@ -171,7 +166,7 @@ const OrderScreen = () => {
                           </Link>
                         </Col>
                         <Col md={4}>
-                          {item.qty} x ${item.price} = ${item.qty * item.price}
+                          {item.qty} x ₹{item.price} = ₹{item.qty * item.price}
                         </Col>
                       </Row>
                     </ListGroup.Item>
@@ -190,60 +185,58 @@ const OrderScreen = () => {
               <ListGroup.Item>
                 <Row>
                   <Col>Items</Col>
-                  <Col>${order.itemsPrice}</Col>
+                  <Col>₹{order.itemsPrice}</Col>
                 </Row>
               </ListGroup.Item>
+              <ListGroup.Item>
+                <Row>
+                  <Col>Discount</Col>
+                  <Col className='text-green'> - ₹{order.discount}</Col>
+                </Row>
+              </ListGroup.Item>
+              {Number(order.couponDiscount) !== 0 ? 
+              (<>
+              <ListGroup.Item>
+                <Row>
+                  <Col>Coupon Discount</Col>
+                  <Col className='text-green'>- {order.couponDiscount}</Col>
+                </Row>
+              </ListGroup.Item>
+              </>
+              )
+               : ('')}
               <ListGroup.Item>
                 <Row>
                   <Col>Shipping</Col>
-                  <Col>${order.shippingPrice}</Col>
+                  <Col>₹{order.shippingPrice}</Col>
                 </Row>
               </ListGroup.Item>
+              { order.paymentMethod === 'COD'? (
+                 <ListGroup.Item>
+                 <Row>
+                   <Col>Covinience Fee</Col>
+                   <Col>₹{order.convenienceFee}</Col>
+                 </Row>
+               </ListGroup.Item>
+              ) : (<></>)}
               <ListGroup.Item>
                 <Row>
                   <Col>Tax</Col>
-                  <Col>${order.taxPrice}</Col>
+                  <Col>₹{order.taxPrice}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Total</Col>
-                  <Col>${order.totalPrice}</Col>
+                  <Col>₹{order.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
-              {!order.isPaid && (
-                <ListGroup.Item>
-                  {loadingPay && <Loader />}
-
-                  {isPending ? (
-                    <Loader />
-                  ) : (
-                    <div>
-                      {/* THIS BUTTON IS FOR TESTING! REMOVE BEFORE PRODUCTION! */}
-                      {/* <Button
-                        style={{ marginBottom: '10px' }}
-                        onClick={onApproveTest}
-                      >
-                        Test Pay Order
-                      </Button> */}
-
-                      <div>
-                        <PayPalButtons
-                          createOrder={createOrder}
-                          onApprove={onApprove}
-                          onError={onError}
-                        ></PayPalButtons>
-                      </div>
-                    </div>
-                  )}
-                </ListGroup.Item>
-              )}
 
               {loadingDeliver && <Loader />}
 
               {userInfo &&
                 userInfo.isAdmin &&
-                order.isPaid &&
+                (order.isPaid || order.paymentMethod === 'COD' )&&
                 !order.isDelivered && (
                   <ListGroup.Item>
                     <Button
@@ -255,10 +248,28 @@ const OrderScreen = () => {
                     </Button>
                   </ListGroup.Item>
                 )}
+
+                {userInfo &&
+                userInfo.isAdmin &&
+                order.isPaid &&
+                order.isDelivered &&
+                // !order.isReturned (
+                  (
+                  <ListGroup.Item>
+                    <Button
+                      type='button'
+                      className='btn btn-block'
+                      onClick={returnHandler}
+                    >
+                      Mark As Returned
+                    </Button>
+                  </ListGroup.Item>
+                )}
             </ListGroup>
           </Card>
         </Col>
       </Row>
+    </div>
     </>
   );
 };
