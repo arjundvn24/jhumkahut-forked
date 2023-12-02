@@ -1,0 +1,54 @@
+[{
+  "_id": {
+    "$oid": "64be34fc30a9379526ec78cf"
+  },
+  "code": "10OFF",
+  "givesDiscount": 10,
+  "minOrder": 200,
+  "flatOff": 0,
+  "freeShip": false,
+  "publicCoupon": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2023-07-24T08:23:24.359Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-25T16:32:47.209Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64be34fc30a9379526ec78d1"
+  },
+  "code": "FLAT200",
+  "givesDiscount": 0,
+  "minOrder": 300,
+  "flatOff": 200,
+  "freeShip": false,
+  "publicCoupon": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2023-07-24T08:23:24.360Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-24T08:23:24.360Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64be34fc30a9379526ec78d0"
+  },
+  "code": "20OFF",
+  "givesDiscount": 20,
+  "minOrder": 599,
+  "flatOff": 0,
+  "freeShip": false,
+  "publicCoupon": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2023-07-24T08:23:24.360Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-30T10:43:53.210Z"
+  }
+}]

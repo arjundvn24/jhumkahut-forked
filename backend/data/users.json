@@ -1,0 +1,144 @@
+[{
+  "_id": {
+    "$oid": "64be34fb30a9379526ec78c4"
+  },
+  "name": "Admin User",
+  "email": "admin@email.com",
+  "password": "$2a$10$jXNLyzlcjYoCnpom7jeOd.ipKre7hK4IMUg5qbVkGuj/Oh1U/RTP6",
+  "isAdmin": true,
+  "wishlist": [
+    {
+      "_id": {
+        "$oid": "64bff05594a106e86befcaa0"
+      },
+      "user": {
+        "$oid": "64be34fb30a9379526ec78c4"
+      },
+      "name": "Sample name",
+      "image": "/uploads\\images-1690528012639.jpeg",
+      "images": [
+        "/uploads\\images-1690528012589.mp4",
+        "/uploads\\images-1690528012639.jpeg"
+      ],
+      "brand": "Sample brand",
+      "category": "Sample category",
+      "description": "Sample description",
+      "rating": 0,
+      "numReviews": 0,
+      "price": 0,
+      "countInStock": 0,
+      "isWholesale": false,
+      "hasSale": 0,
+      "reviews": [],
+      "createdAt": {
+        "$date": "2023-07-25T15:55:01.901Z"
+      },
+      "updatedAt": {
+        "$date": "2023-07-28T07:06:56.057Z"
+      },
+      "__v": 2
+    },
+    {
+      "_id": {
+        "$oid": "64bff04594a106e86befca82"
+      },
+      "user": {
+        "$oid": "64be34fb30a9379526ec78c4"
+      },
+      "name": "Jhumka 1",
+      "image": "/uploads\\images-1690301663885.jpeg",
+      "images": [
+        "/uploads\\images-1690301663885.jpeg"
+      ],
+      "brand": "JhumkaHut",
+      "category": "Earrings",
+      "description": "Oxidised",
+      "rating": 0,
+      "numReviews": 0,
+      "price": 999,
+      "countInStock": 5,
+      "isWholesale": false,
+      "hasSale": 50.050050050050054,
+      "reviews": [],
+      "createdAt": {
+        "$date": "2023-07-25T15:54:45.317Z"
+      },
+      "updatedAt": {
+        "$date": "2023-07-25T16:33:15.879Z"
+      },
+      "__v": 1
+    }
+  ],
+  "__v": 10,
+  "createdAt": {
+    "$date": "2023-07-24T08:23:23.556Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-30T10:36:31.954Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64be34fb30a9379526ec78c5"
+  },
+  "name": "John Doe",
+  "email": "john@email.com",
+  "password": "$2a$10$tTeT9F/UQCB5.X2AnXEU/.zXvoJ.OsfFfYee5htc9AcJ.ixm3Oumi",
+  "isAdmin": false,
+  "wishlist": [
+    {
+      "_id": {
+        "$oid": "64bff04294a106e86befca7c"
+      },
+      "user": {
+        "$oid": "64be34fb30a9379526ec78c4"
+      },
+      "name": "Chain Sleek",
+      "image": "/uploads\\images-1690300622360.jpeg",
+      "images": [
+        "/uploads\\images-1690300622360.jpeg"
+      ],
+      "brand": "JhumkaHut",
+      "category": "Chains",
+      "description": "Snake chain",
+      "rating": 0,
+      "numReviews": 0,
+      "price": 799,
+      "countInStock": 15,
+      "isWholesale": false,
+      "hasSale": 25.03128911138924,
+      "reviews": [],
+      "createdAt": {
+        "$date": "2023-07-25T15:54:42.652Z"
+      },
+      "updatedAt": {
+        "$date": "2023-07-25T15:57:45.844Z"
+      },
+      "__v": 1
+    }
+  ],
+  "__v": 1,
+  "createdAt": {
+    "$date": "2023-07-24T08:23:23.558Z"
+  },
+  "updatedAt": {
+    "$date": "2023-10-22T14:06:43.436Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64be34fb30a9379526ec78c6"
+  },
+  "name": "Jane Doe",
+  "email": "jane@email.com",
+  "password": "$2a$10$Ylzl7VafYeoBGitAO.5PnO6ntGJA.OfGbOCPFRut/orldC3DaLFo.",
+  "isAdmin": false,
+  "wishlist": [],
+  "__v": 0,
+  "createdAt": {
+    "$date": "2023-07-24T08:23:23.559Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-24T08:23:23.559Z"
+  }
+}]

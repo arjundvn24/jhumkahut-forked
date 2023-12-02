@@ -1,0 +1,325 @@
+[{
+  "_id": {
+    "$oid": "64bf63a1d31b713719bf2bc3"
+  },
+  "user": {
+    "$oid": "64be34fb30a9379526ec78c4"
+  },
+  "name": "Jhumka 2",
+  "image": "/uploads\\images-1690265087453.jpeg",
+  "images": [
+    "/uploads\\images-1690265087453.jpeg",
+    "/uploads\\images-1690265087454.jpeg"
+  ],
+  "brand": "Jhumkahut",
+  "category": "Earrings",
+  "description": "Sample description",
+  "rating": 4,
+  "numReviews": 1,
+  "price": 899,
+  "countInStock": 98,
+  "isWholesale": false,
+  "hasSale": 44.493882091212456,
+  "reviews": [
+    {
+      "name": "Admin User",
+      "rating": 4,
+      "comment": "v nice",
+      "user": {
+        "$oid": "64be34fb30a9379526ec78c4"
+      },
+      "_id": {
+        "$oid": "64bf641ad31b713719bf2bdc"
+      },
+      "createdAt": {
+        "$date": "2023-07-25T05:56:42.823Z"
+      },
+      "updatedAt": {
+        "$date": "2023-07-25T05:56:42.823Z"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2023-07-25T05:54:41.373Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-28T07:59:44.523Z"
+  },
+  "__v": 3
+},
+{
+  "_id": {
+    "$oid": "64bfef6d94a106e86befca60"
+  },
+  "user": {
+    "$oid": "64be34fb30a9379526ec78c4"
+  },
+  "name": "Ear Cuffs",
+  "image": "/uploads\\images-1690300461683.jpeg",
+  "images": [
+    "/uploads\\images-1690300461683.jpeg",
+    "/uploads\\images-1690300461685.jpeg"
+  ],
+  "brand": "JhumkaHut",
+  "category": "Earrings",
+  "description": "Ear Cuffs",
+  "rating": 0,
+  "numReviews": 0,
+  "price": 499,
+  "countInStock": 29,
+  "isWholesale": false,
+  "hasSale": 40.08016032064128,
+  "reviews": [],
+  "createdAt": {
+    "$date": "2023-07-25T15:51:09.357Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-30T06:39:46.756Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "64bff03c94a106e86befca76"
+  },
+  "user": {
+    "$oid": "64be34fb30a9379526ec78c4"
+  },
+  "name": "Rhinstone Ear Cuffs",
+  "image": "/uploads\\images-1690300525551.jpeg",
+  "images": [
+    "/uploads\\images-1690300525551.jpeg",
+    "/uploads\\images-1690300525565.jpeg"
+  ],
+  "brand": "JhumkaHut",
+  "category": "Earrings",
+  "description": "Ear Cuffs rhinstones embedded",
+  "rating": 0,
+  "numReviews": 0,
+  "price": 399,
+  "countInStock": 20,
+  "isWholesale": false,
+  "hasSale": 37.59398496240601,
+  "reviews": [],
+  "createdAt": {
+    "$date": "2023-07-25T15:54:36.714Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-30T07:09:56.238Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "64bff04294a106e86befca7c"
+  },
+  "user": {
+    "$oid": "64be34fb30a9379526ec78c4"
+  },
+  "name": "Chain Sleek",
+  "image": "/uploads\\images-1690300622360.jpeg",
+  "images": [
+    "/uploads\\images-1690300622360.jpeg"
+  ],
+  "brand": "JhumkaHut",
+  "category": "Chains",
+  "description": "Snake chain",
+  "rating": 0,
+  "numReviews": 0,
+  "price": 799,
+  "countInStock": 15,
+  "isWholesale": false,
+  "hasSale": 25.03128911138924,
+  "reviews": [],
+  "createdAt": {
+    "$date": "2023-07-25T15:54:42.652Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-25T15:57:45.844Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "64bff04594a106e86befca82"
+  },
+  "user": {
+    "$oid": "64be34fb30a9379526ec78c4"
+  },
+  "name": "Jhumka 1",
+  "image": "/uploads\\images-1690301663885.jpeg",
+  "images": [
+    "/uploads\\images-1690301663885.jpeg"
+  ],
+  "brand": "JhumkaHut",
+  "category": "Earrings",
+  "description": "Oxidised",
+  "rating": 0,
+  "numReviews": 0,
+  "price": 999,
+  "countInStock": 4,
+  "isWholesale": false,
+  "hasSale": 50.050050050050054,
+  "reviews": [],
+  "createdAt": {
+    "$date": "2023-07-25T15:54:45.317Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-30T10:45:00.944Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "64bff04894a106e86befca88"
+  },
+  "user": {
+    "$oid": "64be34fb30a9379526ec78c4"
+  },
+  "name": "Necklace 1",
+  "image": "/uploads\\images-1690301782999.jpeg",
+  "images": [
+    "/uploads\\images-1690301782999.jpeg"
+  ],
+  "brand": "JhumkaHut",
+  "category": "Necklaces",
+  "description": "Sample description",
+  "rating": 0,
+  "numReviews": 0,
+  "price": 495,
+  "countInStock": 20,
+  "isWholesale": false,
+  "hasSale": 19.393939393939394,
+  "reviews": [],
+  "createdAt": {
+    "$date": "2023-07-25T15:54:48.181Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-25T16:17:00.424Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "64bff04a94a106e86befca8e"
+  },
+  "user": {
+    "$oid": "64be34fb30a9379526ec78c4"
+  },
+  "name": "Necklace",
+  "image": "/uploads\\images-1690302107035.jpeg",
+  "images": [
+    "/uploads\\images-1690302107035.jpeg",
+    "/uploads\\images-1690302107042.png"
+  ],
+  "brand": "JhumkaHut",
+  "category": "Necklaces",
+  "description": "Sample description",
+  "rating": 0,
+  "numReviews": 0,
+  "price": 899,
+  "countInStock": 80,
+  "isWholesale": false,
+  "hasSale": 11.123470522803114,
+  "reviews": [],
+  "createdAt": {
+    "$date": "2023-07-25T15:54:50.943Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-25T16:23:02.909Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "64bff05094a106e86befca94"
+  },
+  "user": {
+    "$oid": "64be34fb30a9379526ec78c4"
+  },
+  "name": "Chains 4",
+  "image": "/uploads\\images-1690302282733.jpeg",
+  "images": [
+    "/uploads\\images-1690302282733.jpeg",
+    "/uploads\\images-1690302282739.jpeg"
+  ],
+  "brand": "JhumkaHut",
+  "category": "Chains",
+  "description": "Sample description",
+  "rating": 0,
+  "numReviews": 0,
+  "price": 699,
+  "countInStock": 50,
+  "isWholesale": false,
+  "hasSale": 42.91845493562232,
+  "reviews": [],
+  "createdAt": {
+    "$date": "2023-07-25T15:54:56.270Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-25T16:25:09.613Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "64bff05394a106e86befca9a"
+  },
+  "user": {
+    "$oid": "64be34fb30a9379526ec78c4"
+  },
+  "name": "Earrings",
+  "image": "/uploads\\images-1690527346010.jpeg",
+  "images": [
+    "/uploads\\images-1690527346010.jpeg",
+    "/uploads\\images-1690527346011.jpeg"
+  ],
+  "brand": "JhumkaHut",
+  "category": "Earrings",
+  "description": "Sample description",
+  "rating": 0,
+  "numReviews": 0,
+  "price": 599,
+  "countInStock": 29,
+  "isWholesale": false,
+  "hasSale": 8.19397993311036,
+  "reviews": [],
+  "createdAt": {
+    "$date": "2023-07-25T15:54:59.136Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-28T06:55:49.623Z"
+  },
+  "__v": 3
+},
+{
+  "_id": {
+    "$oid": "64bff05594a106e86befcaa0"
+  },
+  "user": {
+    "$oid": "64be34fb30a9379526ec78c4"
+  },
+  "name": "Sample name",
+  "image": "/uploads\\images-1690528012639.jpeg",
+  "images": [
+    "/uploads\\images-1690528012589.mp4",
+    "/uploads\\images-1690528012639.jpeg"
+  ],
+  "brand": "Sample brand",
+  "category": "Earrings",
+  "description": "Sample description",
+  "rating": 0,
+  "numReviews": 0,
+  "price": 499,
+  "countInStock": 9,
+  "isWholesale": false,
+  "hasSale": 40.08016032064128,
+  "reviews": [],
+  "createdAt": {
+    "$date": "2023-07-25T15:55:01.901Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-30T07:07:21.528Z"
+  },
+  "__v": 2
+}]
