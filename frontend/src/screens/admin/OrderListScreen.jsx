@@ -1,38 +1,38 @@
 import { LinkContainer } from 'react-router-bootstrap';
 import { Table, Button } from 'react-bootstrap';
-import { FaTimes,FaCheck } from 'react-icons/fa';
+import { FaTimes } from 'react-icons/fa';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
 import { useParams } from 'react-router-dom';
 import { useGetOrdersQuery } from '../../slices/ordersApiSlice';
 import AdminPaginate from '../../components/AdminPaginate';
-import ReactHTMLTableToExcel from 'react-html-table-to-excel'; // Import the library
+// import ReactHTMLTableToExcel from 'react-html-table-to-excel'; // Import the library
 
 const OrderListScreen = () => {
   const {pageNumber} = useParams();
 
   const { data: orders, isLoading, error } = useGetOrdersQuery(pageNumber);
 
-  const renderExcelDownload = () => {
-    return (
-      <div>
-        <ReactHTMLTableToExcel
-          id="excel-button"
-          className="btn btn-primary btn-sm font-small"
-          table="order-table"
-          filename="orders"
-          sheet="orders"
-          buttonText="Download as Excel"
-        />
-      </div>
-    );
-  };
+  // const renderExcelDownload = () => {
+  //   return (
+  //     <div>
+  //       <ReactHTMLTableToExcel
+  //         id="excel-button"
+  //         className="btn btn-primary btn-sm font-small"
+  //         table="order-table"
+  //         filename="orders"
+  //         sheet="orders"
+  //         buttonText="Download as Excel"
+  //       />
+  //     </div>
+  //   );
+  // };
 
-  console.log(orders);
+  // console.log(orders);
 
   return (
     <>
-      <div style={{display:'flex', justifyContent:'flex-end'}}>{renderExcelDownload()}</div>
+      {/* <div style={{display:'flex', justifyContent:'flex-end'}}>{renderExcelDownload()}</div> */}
       <h1 className='heading-font'>Orders</h1>
       {isLoading ? (
         <Loader />

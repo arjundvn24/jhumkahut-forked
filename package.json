@@ -17,11 +17,11 @@
   "author": "Brad Traversy",
   "license": "MIT",
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.4.0",
-    "@fortawesome/free-regular-svg-icons": "^6.4.0",
-    "@fortawesome/free-solid-svg-icons": "^6.4.0",
+    "@fortawesome/fontawesome-svg-core": "^6.5.1",
+    "@fortawesome/free-regular-svg-icons": "^6.5.1",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
-    "axios": "^1.4.0",
+    "axios": "^1.6.2",
     "bcryptjs": "^2.4.3",
     "colors": "^1.4.0",
     "cookie-parser": "^1.4.6",
@@ -31,11 +31,9 @@
     "html2canvas": "^1.4.1",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.1",
-    "multer": "^1.4.5-lts.1",
-    "react-html-table-to-excel": "^2.0.0",
-    "react-html-table-to-excel-3": "^3.0.1",
-    "react-player": "^2.12.0",
-    "react-svg": "^16.1.18"
+    "multer": "1.4.5-lts.1",
+    "react-player": "^2.13.0",
+    "react-svg": "^16.1.31"
   },
   "devDependencies": {
     "@types/express": "^4.17.17",
